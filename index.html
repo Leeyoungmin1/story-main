@@ -463,18 +463,22 @@
         wealth: {
           title: '💰 재물',
           desc: "오호! 너의 눈빛에서 보이는 건 바로 '재물운'이야. 열심히 노력했는데도 성과가 눈에 잘 안 보였지? 하지만 이제 걱정 마! 이 키링 속에는 재물이 모이고 흘러넘치는 마법이 담겨 있어. 앞으로 네 곁에 기회의 문이 활짝 열릴 거야 ✨",
+          img: 'assets/wealth.jpg'
         },
         love: {
           title: '💖 사랑',
           desc: '아~ 사랑을 찾고 있구나? 너의 마음이 외롭고 설레임을 기다리고 있어. 이 키링은 좋은 인연을 끌어당기는 마법을 담고 있어. 우연처럼 보이지만 사실은 운명이 될 만남이 찾아올 거야. 사랑의 불빛이 너를 따뜻하게 비출 거야 💖',
+          img: 'assets/love.jpg'
         },
         career: {
           title: '🔥 취업',
           desc: "흐음, 네 마음속에는 '성공'에 대한 간절함이 보이는걸? 노력한 만큼의 성과가 반드시 다가올 거야. 이 키링은 합격과 성취를 부르는 마법을 품고 있지. 면접관의 마음을 사로잡고, 너의 실력을 제대로 발휘할 기회를 줄 거야. 파이팅 🔥",
+          img: 'assets/career.jpg'
         },
         health: {
           title: '🌱 건강',
           desc: '아이고, 너 정말 지쳐있구나. 하지만 다행이야! 이 키링은 건강과 회복의 기운을 담고 있거든. 작은 습관이 모여 큰 힘을 만들고, 네 몸과 마음이 천천히 회복될 거야. 앞으로는 더 밝고 가벼운 걸음으로 나아갈 수 있을 거야 🌱',
+          img: 'assets/health.jpg'
         },
       };
 
@@ -528,6 +532,13 @@
         );
         resultTitle.textContent = results[best].title;
         resultDesc.textContent = results[best].desc;
+        
+        // 결과 이미지가 있다면 표시
+        if (results[best].img) {
+          resultImg.src = results[best].img;
+          resultImg.style.display = 'block';
+        }
+        
         showPage('result');
       }
 
