@@ -29,7 +29,7 @@ const questions = [
   { text: '지금은 자기계발이\n연애보다 우선이다', type: 'love', reverse: true, icon: '📚' },
   { text: '소개팅이나 미팅을\n적극적으로 나간다', type: 'love', icon: '🥂' },
   { text: '자연스러운 만남을\n기다리는 편이다', type: 'love', reverse: true, icon: '🌙' },
-  { text: '연애 앱을 사용해볼\n의향이 있다', type: 'love', icon: '📱' },
+  { text: '소개팅 앱을 사용해볼\n의향이 있다', type: 'love', icon: '📱' },
   { text: '혼자만의 시간이\n더 소중하다', type: 'love', reverse: true, icon: '🧘‍♀️' },
 
   // career (취업/성공)
