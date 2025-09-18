@@ -75,7 +75,7 @@
   #resultImg{display:none;max-width:75%;margin:1.5rem auto;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
 
   #intro h1{
-    font-size:2rem;margin-bottom:1.5rem;background:linear-gradient(45deg,#6c5ce7,#a29bfe,#74b9ff);background-size:200% 200%;
+    font-size:2rem;margin-bottom:1.2rem;background:linear-gradient(45deg,#6c5ce7,#a29bfe,#74b9ff);background-size:200% 200%;
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:textShine 2s ease-in-out infinite alternate
   }
   @keyframes textShine{from{background-position:0% 50%}to{background-position:100% 50%}}
@@ -85,9 +85,10 @@
     display:block;
     max-width:70%;
     height:auto;
-    margin:0 auto 1.5rem auto;
+    margin:0 auto 1.2rem auto;
     border-radius:20px;
     box-shadow:0 10px 20px rgba(0,0,0,0.15);
+    position:relative; z-index:2;
   }
 
   #ending{background:linear-gradient(135deg,rgba(116,185,255,.05),rgba(163,155,254,.05));padding:20px;border-radius:15px;border:1px solid rgba(116,185,255,.1)}
@@ -111,8 +112,8 @@
     <section id="intro" class="page active">
       <h1>✨ 소원 요정 키링 ✨</h1>
 
-      <!-- 인트로 이미지 -->
-      <img id="introImg" src="a2bc5ad8-5308-4889-84e0-a8fb4ecdddf2.png" alt="인트로 이미지">
+      <!-- 인트로 이미지: 이미지가 index.html과 같은 폴더면 ./ 로, assets 폴더면 ./assets/ 로 바꾸세요 -->
+      <img id="introImg" src="./a2bc5ad8-5308-4889-84e0-a8fb4ecdddf2.png" alt="인트로 이미지">
 
       <p>바쁘고 지친 하루 끝, 무거운 발걸음을 이끌고 집으로 돌아가는 길. 창문에 기대어 잠깐 눈을 붙이려던 순간 반짝이는 빛이 나타났다.</p>
       <p>작은 날개를 가진 소녀, 소원 요정!</p>
@@ -149,6 +150,28 @@
       <button id="restartBtn" type="button">🔄 다시 하기</button>
     </section>
   </div>
+
+  <!-- 이미지 진단/대체 처리 -->
+  <script>
+    (function () {
+      const img = document.getElementById('introImg');
+      if (!img) return;
+      img.addEventListener('load', () => {
+        console.log('[introImg] loaded:', img.currentSrc || img.src);
+      });
+      img.addEventListener('error', () => {
+        console.error('[introImg] load FAIL:', img.src);
+        const hint = document.createElement('div');
+        hint.style.cssText = 'margin:10px auto 0; color:#e74c3c; font-size:12px;';
+        hint.textContent = '이미지를 불러오지 못했어요. 경로/파일명/확장자(.png/.jpg)와 대소문자를 확인하세요.';
+        img.insertAdjacentElement('afterend', hint);
+        img.style.display = 'none';
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:70%;height:140px;margin:0 auto 1.2rem;border-radius:20px;background:rgba(0,0,0,0.06)';
+        img.parentElement.insertBefore(ph, hint);
+      });
+    })();
+  </script>
 
   <!-- 퀴즈 로직 -->
   <script src="quiz.js"></script>
