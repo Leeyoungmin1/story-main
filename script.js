@@ -1,7 +1,9 @@
-/* quiz.js - 결과 페이지까지 자연스럽게 이동하도록 안정화 버전 */
+/* =========================
+   quiz.js – 안정화 풀버전
+   ========================= */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ===== Element refs =====
+  // ---------- Element refs ----------
   const pages = document.querySelectorAll('.page');
   const $ = (id) => document.getElementById(id);
 
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const resultDesc  = $('resultDesc');
   const resultImg   = $('resultImg');
 
-  // ===== Data =====
+  // ---------- Data ----------
   const questions = [
     // wealth (재물)
     { text: '돈을 벌기 위해서라면\n야근도 괜찮다', type: 'wealth', icon: '💰' },
@@ -78,29 +80,30 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   };
 
-  // ===== State =====
+  // ---------- State ----------
   let currentQ = 0;
   let scores = { wealth: 0, love: 0, career: 0, health: 0 };
   // answers[i] === true(Yes) / false(No) / undefined(미응답)
   let answers = [];
   let isAnimating = false;
 
-  // ===== Helpers =====
+  // ---------- Helpers ----------
   function showPage(id) {
-    if (isAnimating) return;
+    // 애니메이션 가드 제거로 전환 막힘 방지
     pages.forEach((p) => p.classList.remove('active'));
     const page = document.getElementById(id);
     if (page) page.classList.add('active');
   }
 
   function updateProgress() {
+    if (!progressBar || !progressText) return;
     const progress = (currentQ / questions.length) * 100;
     progressBar.style.width = `${progress}%`;
     progressText.textContent = `${currentQ} / ${questions.length}`;
   }
 
   function setButtonsVisual(state) {
-    // state: 'yes' | 'no' | 'none'
+    if (!btnYes || !btnNo) return;
     const on  = 'linear-gradient(135deg, #74b9ff, #0984e3)';
     const off = 'linear-gradient(135deg, #6c5ce7, #a29bfe)';
     if (state === 'yes') {
@@ -115,97 +118,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 답변에 따른 점수 기여값 계산(설계: Yes만 점수 영향, No는 0)
+  // 답변 기여값 (Yes만 점수 변화 / 역문항은 -1)
   function contribution(index, answerBool) {
     if (answerBool === undefined) return 0;
     const q = questions[index];
     const weight = q.reverse ? -1 : 1;
-    // Yes -> +1 또는 -1 (역문항)
-    // No  -> 0
-    return answerBool ? weight : 0;
+    return answerBool ? weight : 0; // No는 0
   }
 
   function applyAnswer(index, newAnswerBool) {
     const q = questions[index];
     const prev = answers[index];
-
     const prevContrib = contribution(index, prev);
     const nextContrib = contribution(index, newAnswerBool);
-
-    // 해당 카테고리 점수에서 이전 기여를 빼고 새 기여를 더함
     scores[q.type] -= prevContrib;
     scores[q.type] += nextContrib;
-
     answers[index] = newAnswerBool;
   }
 
   function showQuestion() {
     if (currentQ >= questions.length) {
-      // 모든 문항 종료
       showResult();
       return;
     }
-
     const q = questions[currentQ];
-
-    // 아이콘 + 줄바꿈 텍스트 표시
-    questionText.innerHTML = `
-      <div class="question-icon">${q.icon}</div>
-      <div class="question-text">${q.text.replace(/\n/g, '<br>')}</div>
-    `;
-
-    // 진행도
-    updateProgress();
-
-    // Prev 버튼 상태
-    btnPrev.disabled = currentQ === 0;
-
-    // 버튼 비주얼 복원
-    if (answers[currentQ] === true) {
-      setButtonsVisual('yes');
-    } else if (answers[currentQ] === false) {
-      setButtonsVisual('no');
-    } else {
-      setButtonsVisual('none');
+    if (questionText) {
+      questionText.innerHTML = `
+        <div class="question-icon">${q.icon}</div>
+        <div class="question-text">${q.text.replace(/\n/g, '<br>')}</div>
+      `;
     }
+    updateProgress();
+    if (btnPrev) btnPrev.disabled = currentQ === 0;
+
+    if (answers[currentQ] === true)      setButtonsVisual('yes');
+    else if (answers[currentQ] === false) setButtonsVisual('no');
+    else                                  setButtonsVisual('none');
   }
 
   function bestCategoryKey() {
-    // 최고 점수 카테고리 선택(동점이면 최초 등장 카테고리)
     let bestKey = null;
     let bestVal = -Infinity;
     for (const [k, v] of Object.entries(scores)) {
-      if (v > bestVal) {
-        bestVal = v;
-        bestKey = k;
-      }
+      if (v > bestVal) { bestVal = v; bestKey = k; }
     }
-    return bestKey;
+    return bestKey || 'health';
   }
 
   function showResult() {
-    // 진행도 100% 표시 보정
-    progressBar.style.width = `100%`;
-    progressText.textContent = `${questions.length} / ${questions.length}`;
+    if (progressBar && progressText) {
+      progressBar.style.width = `100%`;
+      progressText.textContent = `${questions.length} / ${questions.length}`;
+    }
 
     const key = bestCategoryKey();
     const data = results[key];
 
-    resultTitle.innerHTML = data.title;
-    resultDesc.innerHTML  = data.desc;
+    if (resultTitle) resultTitle.innerHTML = data.title;
+    if (resultDesc)  resultDesc.innerHTML  = data.desc;
 
-    if (data.img) {
-      resultImg.src = data.img;
-      resultImg.alt = data.title.replace(/<[^>]*>?/gm, '');
-      resultImg.style.display = 'block';
-    } else {
-      resultImg.style.display = 'none';
+    if (resultImg) {
+      if (data.img) {
+        resultImg.src = data.img;
+        resultImg.alt = data.title.replace(/<[^>]*>?/gm, '');
+        resultImg.style.display = 'block';
+      } else {
+        resultImg.style.display = 'none';
+      }
     }
 
+    isAnimating = false; // 혹시 남아있던 쓰로틀 해제
     showPage('result');
   }
 
   function disableButtonsBriefly() {
+    if (!btnYes || !btnNo) return;
     if (isAnimating) return;
     isAnimating = true;
     btnYes.disabled = true;
@@ -214,10 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
       btnYes.disabled = false;
       btnNo.disabled  = false;
       isAnimating = false;
-    }, 250);
+    }, 200);
   }
 
-  // ===== Events =====
+  // ---------- Events ----------
   startBtn?.addEventListener('click', () => {
     currentQ = 0;
     scores = { wealth: 0, love: 0, career: 0, health: 0 };
@@ -230,58 +217,37 @@ document.addEventListener('DOMContentLoaded', () => {
   btnYes?.addEventListener('click', () => {
     if (isAnimating) return;
     disableButtonsBriefly();
-
-    // 점수 반영(이전 답변 복원 + 새 답변 적용)
     applyAnswer(currentQ, true);
     setButtonsVisual('yes');
-
-    // 다음 문항
-    setTimeout(() => {
-      currentQ += 1;
-      showQuestion();
-    }, 220);
+    setTimeout(() => { currentQ += 1; showQuestion(); }, 200);
   });
 
   btnNo?.addEventListener('click', () => {
     if (isAnimating) return;
     disableButtonsBriefly();
-
-    // 점수 반영(이전 답변 복원 + 새 답변 적용)
     applyAnswer(currentQ, false);
     setButtonsVisual('no');
-
-    // 다음 문항
-    setTimeout(() => {
-      currentQ += 1;
-      showQuestion();
-    }, 220);
+    setTimeout(() => { currentQ += 1; showQuestion(); }, 200);
   });
 
   btnPrev?.addEventListener('click', () => {
-    if (currentQ > 0) {
-      currentQ -= 1;
-      showQuestion();
-    }
+    if (currentQ > 0) { currentQ -= 1; showQuestion(); }
   });
 
-  endBtn?.addEventListener('click', () => {
-    showPage('ending');
-  });
+  endBtn?.addEventListener('click', () => { showPage('ending'); });
 
   restartBtn?.addEventListener('click', () => {
-    // 처음 화면으로
     currentQ = 0;
     scores = { wealth: 0, love: 0, career: 0, health: 0 };
     answers = [];
     setButtonsVisual('none');
-    progressBar.style.width = '0%';
-    progressText.textContent = `0 / ${questions.length}`;
+    if (progressBar && progressText) {
+      progressBar.style.width = '0%';
+      progressText.textContent = `0 / ${questions.length}`;
+    }
     showPage('intro');
   });
 
-  // 첫 로드 시 안전장치(페이지 구조가 이미 보이는 경우를 방지)
-  // intro 페이지가 있다면 그쪽으로 고정
-  if (document.getElementById('intro')) {
-    showPage('intro');
-  }
+  // 첫 화면 고정
+  if (document.getElementById('intro')) showPage('intro');
 });
