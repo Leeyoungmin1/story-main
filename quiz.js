@@ -1,3 +1,7 @@
+/* =========================
+   quiz.js – 안정화 + 대칭 채점 + 동점 처리
+   ========================= */
+
 // ===== Element refs =====
 const pages = document.querySelectorAll('.page');
 const $ = (id) => document.getElementById(id);
@@ -40,13 +44,13 @@ const questions = [
   { text: '소개팅 앱을 사용해볼\n의향이 있다', type: 'love', icon: '📱' },
   { text: '혼자만의 시간이\n더 소중하다', type: 'love', reverse: true, icon: '🧘‍♀️' },
 
-  // career (취업/성공)
-  { text: '승진을 위해 경쟁하는 걸\n즐긴다', type: 'career', icon: '🏆' },
-  { text: '직장에서 눈에 띄지 않게\n조용히 일한다', type: 'career', reverse: true, icon: '🤫' },
-  { text: '더 좋은 조건의 회사로\n이직을 고려한다', type: 'career', icon: '🚀' },
-  { text: '현재 직장에서 안정적으로\n지내고 싶다', type: 'career', reverse: true, icon: '🏢' },
-  { text: '창업이나 사업에\n관심이 있다', type: 'career', icon: '💡' },
-  { text: '평생 직장에서 일하는 게\n이상적이다', type: 'career', reverse: true, icon: '⚓' },
+  // career (성장·성공) — 학생/직장인 공용
+  { text: '성공을 위해 경쟁하는 상황도\n즐길 수 있다', type: 'career', icon: '🏆' },
+  { text: '눈에 띄지 않게\n조용히 지내는 게 편하다', type: 'career', reverse: true, icon: '🤫' },
+  { text: '더 좋은 기회가 있다면\n도전해보고 싶다', type: 'career', icon: '🚀' },
+  { text: '지금 있는 자리에서\n꾸준히 머무르고 싶다', type: 'career', reverse: true, icon: '🏢' },
+  { text: '새로운 프로젝트나 활동에\n관심이 많다', type: 'career', icon: '💡' },
+  { text: '평범하고 안정적인 길이\n가장 이상적이다', type: 'career', reverse: true, icon: '⚓' },
 
   // health (건강)
   { text: '건강을 위해 운동을\n꾸준히 하고 있다', type: 'health', icon: '🏃‍♀️' },
@@ -60,22 +64,22 @@ const questions = [
 const results = {
   wealth: {
     title: '💰 재물',
-    desc: "오호! 너의 눈빛에서 보이는 건 바로 '재물운'이야. 열심히 노력했는데도 성과가 눈에 잘 안 보였지? 하지만 이제 걱정 마! 이 키링 속에는 재물이 모이고 흘러넘치는 마법이 담겨 있어. 앞으로 네 곁에 기회의 문이 활짝 열릴 거야 ✨",
+    desc: "오호! 너의 눈빛에서 보이는 건 바로 '재물운'이야. 열심히 노력했는데도 성과가 잘 안 보였던 순간도 있었지? 하지만 이제 걱정 마! 이 키링에는 기회를 끌어당기고 풍요를 불러오는 힘이 담겨 있어. 앞으로 네 앞에 새로운 가능성과 선택지가 활짝 열릴 거야 ✨",
     img: 'assets/wealth.jpg'
   },
   love: {
     title: '💖 사랑',
-    desc: '아~ 사랑을 찾고 있구나? 너의 마음이 외롭고 설레임을 기다리고 있어. 이 키링은 좋은 인연을 끌어당기는 마법을 담고 있어. 우연처럼 보이지만 사실은 운명이 될 만남이 찾아올 거야. 사랑의 불빛이 너를 따뜻하게 비출 거야 💖',
+    desc: '아~ 누군가와 함께하는 마음을 바라고 있구나? 설레는 인연이든 따뜻한 우정이든, 네가 원하는 연결이 다가올 거야. 이 키링은 좋은 관계와 인연을 끌어당기는 힘을 지니고 있어. 우연처럼 찾아온 만남이 너의 하루를 반짝이게 만들 거야 💖',
     img: 'assets/love.jpg'
   },
   career: {
-    title: '🔥 취업',
-    desc: "흐음, 네 마음속에는 '성공'에 대한 간절함이 보이는걸? 노력한 만큼의 성과가 반드시 다가올 거야. 이 키링은 합격과 성취를 부르는 마법을 품고 있지. 면접관의 마음을 사로잡고, 너의 실력을 제대로 발휘할 기회를 줄 거야. 파이팅 🔥",
+    title: '🔥 성장·성공',
+    desc: "흐음, 네 마음속에는 '성장'에 대한 간절함이 보이는걸? 학업이든 일상이든 노력한 만큼의 성과가 반드시 다가올 거야. 이 키링은 기회를 붙잡고 성취를 이루는 힘을 담고 있어. 시험이든 프로젝트든, 네가 가진 잠재력을 마음껏 발휘할 순간이 곧 찾아올 거야 🔥",
     img: 'assets/career.jpg'
   },
   health: {
     title: '🌱 건강',
-    desc: '아이고, 너 정말 지쳐있구나. 하지만 다행이야! 이 키링은 건강과 회복의 기운을 담고 있거든. 작은 습관이 모여 큰 힘을 만들고, 네 몸과 마음이 천천히 회복될 거야. 앞으로는 더 밝고 가벼운 걸음으로 나아갈 수 있을 거야 🌱',
+    desc: '아이고, 네가 많이 지쳐 있구나. 하지만 다행이야! 이 키링은 회복과 균형의 기운을 담고 있거든. 작은 습관들이 쌓여서 몸과 마음에 큰 힘이 되어줄 거야. 앞으로는 더 가볍고 건강한 걸음으로 하루하루를 살아갈 수 있을 거야 🌱',
     img: 'assets/health.jpg'
   },
 };
@@ -109,11 +113,14 @@ function setButtonsVisual(state) {
   else { btnYes.style.background = off; btnNo.style.background = off; }
 }
 
+/* 대칭 채점:
+   - 일반문항: Yes=+1, No=0
+   - 역문항(reverse): Yes=0, No=+1  */
 function contribution(index, answerBool) {
   if (answerBool === undefined) return 0;
   const q = questions[index];
-  const weight = q.reverse ? -1 : 1;      // 역문항 Yes = -1
-  return answerBool ? weight : 0;         // No = 0
+  const yes = answerBool ? 1 : 0;
+  return q.reverse ? (1 - yes) : yes;
 }
 
 function applyAnswer(index, newAnswerBool) {
@@ -141,12 +148,40 @@ function showQuestion() {
   else setButtonsVisual('none');
 }
 
+// 카테고리별 응답 수(Yes/No 모두)
+function answeredCountByType() {
+  const counts = { wealth: 0, love: 0, career: 0, health: 0 };
+  answers.forEach((ans, i) => {
+    if (ans !== undefined) counts[questions[i].type] += 1;
+  });
+  return counts;
+}
+
+// 동점 처리 강화:
+// 1) 최대 점수 카테고리들 중
+// 2) 응답 수(해당 타입 질문에 답한 횟수)가 많은 순
+// 3) 그래도 동점이면 "가장 최근에 답한" 타입
+// 4) 최종 백업: 배열 첫번째
 function bestCategoryKey() {
-  let bestKey = 'health', bestVal = -Infinity;
-  for (const [k, v] of Object.entries(scores)) {
-    if (v > bestVal) { bestVal = v; bestKey = k; }
+  const counts = answeredCountByType();
+  const maxScore = Math.max(...Object.values(scores));
+  let candidates = Object.keys(scores).filter(k => scores[k] === maxScore);
+  if (candidates.length === 1) return candidates[0];
+
+  // 응답 수 기준 정렬
+  candidates.sort((a, b) => counts[b] - counts[a]);
+  const topCount = counts[candidates[0]];
+  const topByCount = candidates.filter(k => counts[k] === topCount);
+  if (topByCount.length === 1) return topByCount[0];
+
+  // 최근 응답 우선
+  for (let i = answers.length - 1; i >= 0; i--) {
+    if (answers[i] !== undefined) {
+      const t = questions[i].type;
+      if (topByCount.includes(t)) return t;
+    }
   }
-  return bestKey;
+  return topByCount[0] || 'health';
 }
 
 function showResult() {
@@ -165,6 +200,7 @@ function showResult() {
       resultImg.src = data.img;
       resultImg.alt = data.title.replace(/<[^>]*>?/gm, '');
       resultImg.style.display = 'block';
+      resultImg.onerror = () => { resultImg.style.display = 'none'; };
     } else {
       resultImg.style.display = 'none';
     }
