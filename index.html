@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>소원 요정 키링 테스트</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- 인트로 -->
+      <section id="intro" class="page active">
+        <h1>✨ 소원 요정 키링 ✨</h1>
+        <p>
+          바쁘고 지친 하루 끝, 무거운 발걸음을 이끌고 집으로 돌아가는 길.<br />
+          창문에 기대어 잠깐 눈을 붙이려던 순간 반짝이는 빛이 나타났다.<br />
+          작은 날개를 가진 소녀, 소원 요정!<br />
+        </p>
+        <button id="startBtn">테스트 시작하기</button>
+      </section>
+
+      <!-- 질문 -->
+      <section id="quiz" class="page">
+        <h2 id="questionText">질문이 여기에 표시됩니다</h2>
+        <div class="options">
+          <button id="btnYes">네</button>
+          <button id="btnNo">아니오</button>
+        </div>
+        <p id="progress">1 / 10</p>
+      </section>
+
+      <!-- 결과 -->
+      <section id="result" class="page">
+        <h2 id="resultTitle"></h2>
+        <p id="resultDesc"></p>
+        <div class="talisman">[부적 이미지 자리]</div>
+        <button id="endBtn">엔딩 보기</button>
+      </section>
+
+      <!-- 엔딩 -->
+      <section id="ending" class="page">
+        <h2>소원 요정의 선물 🎁</h2>
+        <p>
+          짠! 이게 바로 너를 위한 소원 키링이야.<br />
+          소원이 이뤄지길 바라는 간절한 마음으로 키링을 만들어보는 건 어때?<br />
+          앞으로의 하루하루가 행운 가득하길 바랄게 ✨
+        </p>
+        <button id="restartBtn">다시 하기</button>
+      </section>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
