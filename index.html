@@ -1,279 +1,156 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>소원 요정 키링 테스트</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-      @charset "UTF-8";
-      
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-      }
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>소원 요정 키링 테스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+  body{
+    font-family:"Noto Sans KR",sans-serif;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+    background-attachment:fixed;min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:15px;overflow-x:hidden;position:relative
+  }
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;opacity:.6;
+    background:
+      radial-gradient(2px 2px at 20px 30px,#fff,transparent),
+      radial-gradient(2px 2px at 40px 70px,#fff,transparent),
+      radial-gradient(1px 1px at 90px 40px,#fff,transparent),
+      radial-gradient(1px 1px at 130px 80px,#fff,transparent),
+      radial-gradient(2px 2px at 160px 30px,#fff,transparent);
+    background-size:200px 100px;animation:sparkles 3s linear infinite
+  }
+  @keyframes sparkles{from{transform:translateY(0)}to{transform:translateY(-100px)}}
 
-      body {
-        font-family: "Noto Sans KR", sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-        background-attachment: fixed;
-        margin: 0;
-        padding: 15px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        position: relative;
-        overflow-x: hidden;
-        touch-action: manipulation;
-      }
+  .app{
+    width:100%;max-width:340px;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);
+    border-radius:25px;padding:30px 25px;position:relative;overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,.1),0 0 0 1px rgba(255,255,255,.2)
+  }
 
-      /* 별빛 효과 */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: 
-          radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-          radial-gradient(2px 2px at 40px 70px, #fff, transparent),
-          radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-          radial-gradient(1px 1px at 130px 80px, #fff, transparent),
-          radial-gradient(2px 2px at 160px 30px, #fff, transparent);
-        background-size: 200px 100px;
-        animation: sparkles 3s linear infinite;
-        pointer-events: none;
-        opacity: 0.6;
-      }
+  h1,h2{font-size:1.6rem;font-weight:700;color:#2d3436;margin-bottom:1.2rem;line-height:1.3;text-align:center}
+  p{font-size:.9rem;color:#636e72;line-height:1.6;margin-bottom:1rem;text-align:center;word-break:keep-all}
 
-      @keyframes sparkles {
-        from { transform: translateY(0px); }
-        to { transform: translateY(-100px); }
-      }
+  .page{display:none;position:relative;z-index:1;text-align:center}
+  .page.active{display:block;animation:fadeInUp .6s ease-out}
+  @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-      h1, h2 {
-        font-size: 1.6rem;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 1.2rem;
-        line-height: 1.3;
-        text-align: center;
-      }
+  .progress-container{width:100%;height:8px;background:rgba(108,92,231,.1);border-radius:10px;margin-bottom:20px;overflow:hidden}
+  .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,#6c5ce7,#a29bfe);border-radius:10px;transition:width .4s ease;position:relative}
+  .progress-bar::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:shimmer 2s infinite}
+  @keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  #progress-text{font-size:.85rem;color:#74b9ff;margin:.5rem 0;font-weight:500}
 
-      p {
-        font-size: 0.9rem;
-        color: #636e72;
-        line-height: 1.6;
-        font-weight: 400;
-        margin-bottom: 1rem;
-        text-align: center;
-        word-break: keep-all;
-      }
+  button{
+    width:100%;margin:8px 0;padding:16px 24px;font-size:.95rem;font-weight:600;color:#fff;border:none;border-radius:25px;
+    background:linear-gradient(135deg,#6c5ce7,#a29bfe);cursor:pointer;transition:all .2s ease;position:relative;overflow:hidden;
+    box-shadow:0 6px 20px rgba(108,92,231,.25)
+  }
+  button::before{content:'';position:absolute;inset:0;left:-100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);transition:left .5s}
+  button:not(:disabled):hover::before{left:100%}
+  button:active{transform:scale(.98);box-shadow:0 4px 15px rgba(108,92,231,.3)}
+  button:disabled{opacity:.6;cursor:not-allowed}
+  .options{display:grid;grid-template-columns:1fr;gap:12px;margin:1.5rem 0}
+  .nav-buttons{display:flex;gap:10px;margin-top:1rem}
+  .nav-button{flex:1;padding:12px 16px;font-size:.85rem;background:rgba(108,92,231,.1);color:#6c5ce7;border:1px solid rgba(108,92,231,.2)}
 
-      .app {
-        width: 100%;
-        max-width: 340px;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 25px;
-        padding: 30px 25px;
-        box-shadow: 
-          0 20px 40px rgba(0, 0, 0, 0.1),
-          0 0 0 1px rgba(255, 255, 255, 0.2);
-        box-sizing: border-box;
-        position: relative;
-        overflow: hidden;
-      }
+  #questionText{
+    background:linear-gradient(135deg,rgba(116,185,255,.1),rgba(163,155,254,.1));
+    padding:20px;border-radius:15px;margin-bottom:1.5rem;border:1px solid rgba(116,185,255,.2);
+    font-size:.95rem;line-height:1.4;color:#2d3436;font-weight:500;min-height:110px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;word-break:keep-all
+  }
+  .question-icon{font-size:2.2rem;animation:bounce 2s infinite}
+  .question-text{text-align:center;white-space:pre-line}
+  @keyframes bounce{0%,20%,50%,80%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}60%{transform:translateY(-4px)}}
 
-      .page { display: none; text-align: center; position: relative; z-index: 1; }
-      .page.active { display: block; animation: fadeInUp 0.6s ease-out; }
+  #resultTitle{font-size:1.8rem;margin-bottom:1rem;color:#6c5ce7}
+  #resultDesc{
+    background:linear-gradient(135deg,rgba(108,92,231,.08),rgba(163,155,254,.08));
+    padding:20px;border-radius:15px;margin:1.5rem 0;border:1px solid rgba(108,92,231,.15);line-height:1.7;color:#636e72;font-size:.9rem
+  }
+  #resultImg{display:none;max-width:75%;margin:1.5rem auto;border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
 
-      @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
+  #intro h1{
+    font-size:2rem;margin-bottom:1.5rem;background:linear-gradient(45deg,#6c5ce7,#a29bfe,#74b9ff);background-size:200% 200%;
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:textShine 2s ease-in-out infinite alternate
+  }
+  @keyframes textShine{from{background-position:0% 50%}to{background-position:100% 50%}}
 
-      /* 프로그레스 바 */
-      .progress-container {
-        width: 100%;
-        height: 8px;
-        background: rgba(108, 92, 231, 0.1);
-        border-radius: 10px;
-        margin-bottom: 20px;
-        overflow: hidden;
-      }
-      .progress-bar {
-        height: 100%;
-        background: linear-gradient(90deg, #6c5ce7, #a29bfe);
-        border-radius: 10px;
-        transition: width 0.4s ease;
-        width: 0%;
-        position: relative;
-      }
-      .progress-bar::after {
-        content: '';
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        animation: shimmer 2s infinite;
-      }
-      @keyframes shimmer { 0% {transform: translateX(-100%);} 100% {transform: translateX(100%);} }
+  /* 인트로 이미지 */
+  #introImg {
+    display:block;
+    max-width:70%;
+    height:auto;
+    margin:0 auto 1.5rem auto;
+    border-radius:20px;
+    box-shadow:0 10px 20px rgba(0,0,0,0.15);
+  }
 
-      button {
-        margin: 8px 0;
-        padding: 16px 24px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 25px;
-        background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-        color: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        box-shadow: 0 6px 20px rgba(108, 92, 231, 0.25);
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        touch-action: manipulation;
-        transform: scale(1);
-      }
-      button:active { transform: scale(0.98); box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); transition: all 0.1s ease; }
-      button:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-      button::before {
-        content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s ease;
-      }
-      button:not(:disabled):hover::before { left: 100%; }
+  #ending{background:linear-gradient(135deg,rgba(116,185,255,.05),rgba(163,155,254,.05));padding:20px;border-radius:15px;border:1px solid rgba(116,185,255,.1)}
+  #ending h2{color:#74b9ff;margin-bottom:1rem}
 
-      .options { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 1.5rem 0; }
+  @media (max-width:380px){
+    .app{padding:25px 20px;max-width:320px}
+    h1,h2{font-size:1.5rem}
+    #intro h1{font-size:1.8rem}
+    p{font-size:.85rem}
+    button{padding:14px 20px;font-size:.9rem}
+    #questionText{padding:18px;font-size:.9rem;min-height:100px}
+    .question-icon{font-size:2rem}
+    .nav-button{font-size:.8rem;padding:10px 12px}
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <!-- 인트로 -->
+    <section id="intro" class="page active">
+      <h1>✨ 소원 요정 키링 ✨</h1>
 
-      /* 네비게이션 버튼들 */
-      .nav-buttons { display: flex; gap: 10px; margin-top: 1rem; }
-      .nav-button {
-        flex: 1; padding: 12px 16px; font-size: 0.85rem;
-        background: rgba(108, 92, 231, 0.1); color: #6c5ce7;
-        border: 1px solid rgba(108, 92, 231, 0.2); margin: 0;
-      }
-      .nav-button:disabled {
-        background: rgba(150, 150, 150, 0.1); color: #999; border: 1px solid rgba(150, 150, 150, 0.2);
-      }
+      <!-- 인트로 이미지 -->
+      <img id="introImg" src="a2bc5ad8-5308-4889-84e0-a8fb4ecdddf2.png" alt="인트로 이미지">
 
-      #progress-text { font-size: 0.85rem; color: #74b9ff; margin: 0.5rem 0; font-weight: 500; }
+      <p>바쁘고 지친 하루 끝, 무거운 발걸음을 이끌고 집으로 돌아가는 길. 창문에 기대어 잠깐 눈을 붙이려던 순간 반짝이는 빛이 나타났다.</p>
+      <p>작은 날개를 가진 소녀, 소원 요정!</p>
+      <button id="startBtn" type="button">✨ 테스트 시작하기</button>
+    </section>
 
-      /* 인트로 페이지 */
-      #intro h1 {
-        font-size: 2rem; margin-bottom: 1.5rem;
-        background: linear-gradient(45deg, #6c5ce7, #a29bfe, #74b9ff);
-        background-size: 200% 200%;
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        background-clip: text; animation: textShine 2s ease-in-out infinite alternate;
-      }
-      @keyframes textShine { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
-      #intro p { color: #636e72; margin-bottom: 2rem; font-size: 0.9rem; line-height: 1.7; }
+    <!-- 질문 -->
+    <section id="quiz" class="page">
+      <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+      <p id="progress-text">0 / 24</p>
+      <div id="questionText">질문이 여기에 표시됩니다</div>
+      <div class="options">
+        <button id="btnYes" type="button">💫 네</button>
+        <button id="btnNo"  type="button">🌙 아니오</button>
+      </div>
+      <div class="nav-buttons">
+        <button id="btnPrev" class="nav-button" type="button">← 이전</button>
+      </div>
+    </section>
 
-      /* 질문 텍스트 */
-      #questionText {
-        background: linear-gradient(135deg, rgba(116, 185, 255, 0.1), rgba(163, 155, 254, 0.1));
-        padding: 20px; border-radius: 15px; margin-bottom: 1.5rem;
-        border: 1px solid rgba(116, 185, 255, 0.2); font-size: 0.95rem; line-height: 1.4;
-        color: #2d3436; font-weight: 500; min-height: 110px; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; gap: 10px; word-break: keep-all;
-      }
-      .question-icon { font-size: 2.2rem; margin-bottom: 6px; animation: bounce 2s infinite; }
-      .question-text { text-align: center; white-space: pre-line; }
-      @keyframes bounce {
-        0%,20%,50%,80%,100% { transform: translateY(0); }
-        40% { transform: translateY(-8px); }
-        60% { transform: translateY(-4px); }
-      }
+    <!-- 결과 -->
+    <section id="result" class="page">
+      <h2 id="resultTitle">결과</h2>
+      <p id="resultDesc">결과 설명이 여기에 표시됩니다</p>
+      <img id="resultImg" alt="결과 이미지" />
+      <button id="endBtn" type="button">🎁 엔딩 보기</button>
+    </section>
 
-      /* 결과 페이지 */
-      #resultTitle { font-size: 1.8rem; margin-bottom: 1rem; color: #6c5ce7; }
-      #resultDesc {
-        background: linear-gradient(135deg, rgba(108, 92, 231, 0.08), rgba(163, 155, 254, 0.08));
-        padding: 20px; border-radius: 15px; margin: 1.5rem 0;
-        border: 1px solid rgba(108, 92, 231, 0.15); line-height: 1.7; color: #636e72; font-size: 0.9rem;
-      }
-      #resultImg { display: none; max-width: 75%; margin: 1.5rem auto; border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+    <!-- 엔딩 -->
+    <section id="ending" class="page">
+      <h2>소원 요정의 선물 🎁</h2>
+      <p>짠! 이게 바로 너를 위한 소원 키링이야.</p>
+      <p>소원이 이뤄지길 바라는 간절한 마음으로 키링을 만들어보는 건 어때? 앞으로의 하루하루가 행운 가득하길 바랄게 ✨</p>
+      <button id="restartBtn" type="button">🔄 다시 하기</button>
+    </section>
+  </div>
 
-      /* 엔딩 페이지 */
-      #ending {
-        background: linear-gradient(135deg, rgba(116, 185, 255, 0.05), rgba(163, 155, 254, 0.05));
-        padding: 20px; border-radius: 15px; border: 1px solid rgba(116, 185, 255, 0.1);
-      }
-      #ending h2 { color: #74b9ff; margin-bottom: 1rem; }
-      #ending p { line-height: 1.7; margin-bottom: 1.5rem; }
-
-      /* 모바일 최적화 */
-      @media (max-width: 380px) {
-        .app { padding: 25px 20px; max-width: 320px; }
-        h1, h2 { font-size: 1.5rem; }
-        #intro h1 { font-size: 1.8rem; }
-        p { font-size: 0.85rem; }
-        button { padding: 14px 20px; font-size: 0.9rem; }
-        #questionText { padding: 18px; font-size: 0.9rem; min-height: 100px; }
-        .question-icon { font-size: 2rem; }
-        .nav-button { font-size: 0.8rem; padding: 10px 12px; }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app">
-      <!-- 인트로 -->
-      <section id="intro" class="page active">
-        <h1>✨ 소원 요정 키링 ✨</h1>
-        <p>바쁘고 지친 하루 끝, 무거운 발걸음을 이끌고 집으로 돌아가는 길. 창문에 기대어 잠깐 눈을 붙이려던 순간 반짝이는 빛이 나타났다.</p>
-        <p>작은 날개를 가진 소녀, 소원 요정!</p>
-        <button id="startBtn">✨ 테스트 시작하기</button>
-      </section>
-
-      <!-- 질문 -->
-      <section id="quiz" class="page">
-        <div class="progress-container">
-          <div class="progress-bar" id="progressBar"></div>
-        </div>
-        <p id="progress-text">0 / 24</p>
-        
-        <div id="questionText">질문이 여기에 표시됩니다</div>
-        
-        <div class="options">
-          <button id="btnYes" type="button">💫 네</button>
-          <button id="btnNo"  type="button">🌙 아니오</button>
-        </div>
-
-        <div class="nav-buttons">
-          <button id="btnPrev" class="nav-button" type="button">← 이전</button>
-        </div>
-      </section>
-
-      <!-- 결과 -->
-      <section id="result" class="page">
-        <h2 id="resultTitle">결과</h2>
-        <p id="resultDesc">결과 설명이 여기에 표시됩니다</p>
-        <img id="resultImg" alt="결과 이미지" />
-        <button id="endBtn" type="button">🎁 엔딩 보기</button>
-      </section>
-
-      <!-- 엔딩 -->
-      <section id="ending" class="page">
-        <h2>소원 요정의 선물 🎁</h2>
-        <p>짠! 이게 바로 너를 위한 소원 키링이야.</p>
-        <p>소원이 이뤄지길 바라는 간절한 마음으로 키링을 만들어보는 건 어때? 앞으로의 하루하루가 행운 가득하길 바랄게 ✨</p>
-        <button id="restartBtn" type="button">🔄 다시 하기</button>
-      </section>
-    </div>
-
-    <script src="quiz.js" defer></script>
-  </body>
+  <!-- 퀴즈 로직 -->
+  <script src="quiz.js"></script>
+</body>
 </html>
