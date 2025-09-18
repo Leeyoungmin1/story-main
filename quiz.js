@@ -21,14 +21,14 @@ const resultTitle = $('resultTitle');
 const resultDesc  = $('resultDesc');
 const resultImg   = $('resultImg');
 
-// ===== Guard: 필수 요소 없으면 콘솔로 바로 알려줌 =====
+// ===== Guard =====
 if (!startBtn || !btnYes || !btnNo || !btnPrev) {
   console.error('필수 요소를 찾지 못했습니다. HTML의 id를 확인하세요.');
 }
 
 // ===== Data =====
 const questions = [
-  // wealth (재물)
+  // wealth
   { text: '돈을 벌기 위해서라면\n야근도 괜찮다', type: 'wealth', icon: '💰' },
   { text: '적당히 벌고 여유롭게\n사는 게 낫다', type: 'wealth', reverse: true, icon: '🌸' },
   { text: '투자 손실을 감수하더라도\n큰 수익을 노린다', type: 'wealth', icon: '📈' },
@@ -36,7 +36,7 @@ const questions = [
   { text: '명품이나 비싼 물건을\n사고 싶다', type: 'wealth', icon: '👜' },
   { text: '가성비가 브랜드보다\n중요하다', type: 'wealth', reverse: true, icon: '🏷️' },
 
-  // love (사랑)
+  // love
   { text: '연애를 위해 시간과\n에너지를 투자하고 싶다', type: 'love', icon: '💕' },
   { text: '지금은 자기계발이\n연애보다 우선이다', type: 'love', reverse: true, icon: '📚' },
   { text: '소개팅이나 미팅을\n적극적으로 나간다', type: 'love', icon: '🥂' },
@@ -44,7 +44,7 @@ const questions = [
   { text: '소개팅 앱을 사용해볼\n의향이 있다', type: 'love', icon: '📱' },
   { text: '혼자만의 시간이\n더 소중하다', type: 'love', reverse: true, icon: '🧘‍♀️' },
 
-  // career (성장·성공) — 학생/직장인 공용
+  // career (학생·직장인 공용)
   { text: '성공을 위해 경쟁하는 상황도\n즐길 수 있다', type: 'career', icon: '🏆' },
   { text: '눈에 띄지 않게\n조용히 지내는 게 편하다', type: 'career', reverse: true, icon: '🤫' },
   { text: '더 좋은 기회가 있다면\n도전해보고 싶다', type: 'career', icon: '🚀' },
@@ -52,7 +52,7 @@ const questions = [
   { text: '새로운 프로젝트나 활동에\n관심이 많다', type: 'career', icon: '💡' },
   { text: '평범하고 안정적인 길이\n가장 이상적이다', type: 'career', reverse: true, icon: '⚓' },
 
-  // health (건강)
+  // health
   { text: '건강을 위해 운동을\n꾸준히 하고 있다', type: 'health', icon: '🏃‍♀️' },
   { text: '운동보다는 충분한\n휴식이 중요하다', type: 'health', reverse: true, icon: '😴' },
   { text: '건강한 식단을 유지하려고\n노력한다', type: 'health', icon: '🥗' },
@@ -115,7 +115,7 @@ function setButtonsVisual(state) {
 
 /* 대칭 채점:
    - 일반문항: Yes=+1, No=0
-   - 역문항(reverse): Yes=0, No=+1  */
+   - 역문항(reverse): Yes=0, No=+1 */
 function contribution(index, answerBool) {
   if (answerBool === undefined) return 0;
   const q = questions[index];
@@ -148,7 +148,7 @@ function showQuestion() {
   else setButtonsVisual('none');
 }
 
-// 카테고리별 응답 수(Yes/No 모두)
+// 응답 수(해당 타입 질문에 Yes/No 했던 횟수)
 function answeredCountByType() {
   const counts = { wealth: 0, love: 0, career: 0, health: 0 };
   answers.forEach((ans, i) => {
@@ -157,24 +157,18 @@ function answeredCountByType() {
   return counts;
 }
 
-// 동점 처리 강화:
-// 1) 최대 점수 카테고리들 중
-// 2) 응답 수(해당 타입 질문에 답한 횟수)가 많은 순
-// 3) 그래도 동점이면 "가장 최근에 답한" 타입
-// 4) 최종 백업: 배열 첫번째
+// 동점 처리: 점수 → 응답 수 → 최근 응답
 function bestCategoryKey() {
   const counts = answeredCountByType();
   const maxScore = Math.max(...Object.values(scores));
   let candidates = Object.keys(scores).filter(k => scores[k] === maxScore);
   if (candidates.length === 1) return candidates[0];
 
-  // 응답 수 기준 정렬
   candidates.sort((a, b) => counts[b] - counts[a]);
   const topCount = counts[candidates[0]];
   const topByCount = candidates.filter(k => counts[k] === topCount);
   if (topByCount.length === 1) return topByCount[0];
 
-  // 최근 응답 우선
   for (let i = answers.length - 1; i >= 0; i--) {
     if (answers[i] !== undefined) {
       const t = questions[i].type;
@@ -205,7 +199,7 @@ function showResult() {
       resultImg.style.display = 'none';
     }
   }
-  isAnimating = false; // 혹시 모를 쓰로틀 해제
+  isAnimating = false;
   showPage('result');
 }
 
@@ -261,5 +255,5 @@ restartBtn?.addEventListener('click', () => {
   showPage('intro');
 });
 
-// 첫 화면 고정(안전)
+// 첫 화면
 if (document.getElementById('intro')) showPage('intro');
