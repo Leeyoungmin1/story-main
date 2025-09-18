@@ -125,19 +125,21 @@ function showQuestion() {
 }
 
 function showResult() {
+  console.log('최종 점수:', scores); // 디버깅용
+  
   // 가장 높은 점수의 카테고리 찾기
-  const maxScore = Math.max(...Object.values(scores));
-  const bestCategories = Object.keys(scores).filter(key => scores[key] === maxScore);
+  const bestCategory = Object.keys(scores).reduce((a, b) => 
+    scores[a] > scores[b] ? a : b
+  );
   
-  // 동점인 경우 첫 번째 카테고리 선택
-  const best = bestCategories[0];
+  console.log('선택된 카테고리:', bestCategory); // 디버깅용
   
-  resultTitle.textContent = results[best].title;
-  resultDesc.textContent = results[best].desc;
+  resultTitle.innerHTML = results[bestCategory].title;
+  resultDesc.innerHTML = results[bestCategory].desc;
   
   // 결과 이미지가 있다면 표시
-  if (results[best].img) {
-    resultImg.src = results[best].img;
+  if (results[bestCategory].img) {
+    resultImg.src = results[bestCategory].img;
     resultImg.style.display = 'block';
   }
   
@@ -167,11 +169,12 @@ startBtn.addEventListener('click', () => {
   showQuestion();
 });
 
-btnYes.addEventListener('click', () => {
+  btnYes.addEventListener('click', () => {
   if (isAnimating) return;
   disableButtons();
   
   const question = questions[currentQ];
+  console.log(`질문 ${currentQ + 1}: ${question.text}, 역방향: ${question.reverse}`); // 디버깅용
   
   // 이전 답변이 있다면 점수에서 제거
   if (answers[currentQ] !== undefined) {
@@ -195,6 +198,8 @@ btnYes.addEventListener('click', () => {
   }
   
   answers[currentQ] = true;
+  console.log('현재 점수:', scores); // 디버깅용
+  
   btnYes.style.background = 'linear-gradient(135deg, #74b9ff, #0984e3)';
   btnNo.style.background = 'linear-gradient(135deg, #6c5ce7, #a29bfe)';
   
@@ -210,6 +215,7 @@ btnNo.addEventListener('click', () => {
   disableButtons();
   
   const question = questions[currentQ];
+  console.log(`질문 ${currentQ + 1}: ${question.text}, 역방향: ${question.reverse}`); // 디버깅용
   
   // 이전 답변이 있다면 점수에서 제거
   if (answers[currentQ] !== undefined) {
@@ -223,11 +229,12 @@ btnNo.addEventListener('click', () => {
         scores[question.type] -= 1;
       }
     }
-  } else {
-    // 새 답변 - "아니오"는 아무 점수 변화 없음 (0점 처리)
   }
+  // 새 답변 - "아니오"는 점수 변화 없음 (0점)
   
   answers[currentQ] = false;
+  console.log('현재 점수:', scores); // 디버깅용
+  
   btnNo.style.background = 'linear-gradient(135deg, #74b9ff, #0984e3)';
   btnYes.style.background = 'linear-gradient(135deg, #6c5ce7, #a29bfe)';
   
